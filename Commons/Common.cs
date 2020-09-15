@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.JSInterop;
 
 namespace Aohost.Blog.BlazorApp.Commons
@@ -48,7 +47,7 @@ namespace Aohost.Blog.BlazorApp.Commons
         /// <returns></returns>
         public async Task SetStorageAsync(string name, string value)
         {
-            await InvokeAsync("window.func.setStorage", name, value);
+            await InvokeAsync("func.setStorage", name, value);
         }
 
         /// <summary>
@@ -58,7 +57,7 @@ namespace Aohost.Blog.BlazorApp.Commons
         /// <returns></returns>
         public async Task<string> GetStorageAsync(string name)
         {
-            return await InvokeAsync<string>("window.func.getStorage", name);
+            return await InvokeAsync<string>("func.getStorage", name);
         }
 
         /// <summary>

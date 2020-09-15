@@ -46,7 +46,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var uri = new Uri("http://localhost:7777/blog/categories");
+        var uri = new Uri("https://aohost/top/blog/categories");
         categories = await Http.GetFromJsonAsync<ServiceResult<IEnumerable<QueryCategoryDto>>>(uri);
     }
 }

@@ -1,4 +1,5 @@
 ﻿@page "/auth"
+@page "/account/auth"
 @using Microsoft.AspNetCore.WebUtilities
 
 <Loading></Loading>
@@ -25,6 +26,7 @@
             }
             else
             {
+
                 // access_token失效，或者请求失败的情况下，重新执行一次验证流程
                 await AuthProcessAsync();
             }

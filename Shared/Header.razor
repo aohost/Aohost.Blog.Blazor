@@ -2,61 +2,60 @@
     <nav class="navbar">
         <div class="container">
             <div class="navbar-header header-logo">
-                <NavLink class="menu-item" href="">Aohost</NavLink>
+                <NavLink class="menu-item" href="/">Aohost</NavLink>
             </div>
             <div class="menu navbar-right">
                 <NavLink class="menu-item" href="posts">Posts</NavLink>
-                @*<NavLink class="menu-item" href="posts" @onclick="@(async ()=> await Common.NavigateTo("posts"))">Posts</NavLink>*@
                 <NavLink class="menu-item" href="categories">Categories</NavLink>
                 <NavLink class="menu-item" href="tags">Tags</NavLink>
                 <NavLink class="menu-item apps" href="apps">Apps</NavLink>
-                <input id="switch_default" type="checkbox" class="switch_default" @onchange="SwitchTheme"
-                       checked="@(currentTheme== "Dark")" />
+                <input id="switch_default" type="checkbox" class="switch_default" @onchange="SwitchTheme" checked="@(currentTheme == "Dark")"/>
                 <label for="switch_default" class="toggleBtn"></label>
             </div>
         </div>
     </nav>
     <nav class="navbar-mobile">
-        <div class="navbar-header">
-            <div>
-                <NavLink class="menu-item" href="/">Aohost</NavLink>
-                <NavLink @onclick="SwitchTheme">&nbsp;·&nbsp;@currentTheme</NavLink>
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <NavLink class="menu-item" href="/">Aohost</NavLink>
+                    <NavLink @onclick="SwitchTheme">&nbsp;·&nbsp;@currentTheme</NavLink>
+                </div>
+                <div class="menu-toggle" @onclick="ToggleNavMenu">&#9776; Menu</div>
             </div>
-            <div class="menu-toggle" @onclick="ToggleNavMenu">&#9776; Menu</div>
-        </div>
-        <div class="menu @NavMenuCssClass">
-            <NavLink class="menu-item" href="posts">Posts</NavLink>
-            <NavLink class="menu-item" href="categories">Categories</NavLink>
-            <NavLink class="menu-item" href="tags">Tags</NavLink>
-            <NavLink class="menu-item apps" href="apps">Apps</NavLink>
+            <div class="menu @NavMenuCssClass">
+                <NavLink class="menu-item" href="posts">Posts</NavLink>
+                <NavLink class="menu-item" href="categories">Categories</NavLink>
+                <NavLink class="menu-item" href="tags">Tags</NavLink>
+                <NavLink class="menu-item apps" href="apps">Apps</NavLink>
+            </div>
         </div>
     </nav>
 </header>
 
-@code
-{
+@code{
     /// <summary>
     /// 下拉菜单是否打开
     /// </summary>
-    private bool CollapseNavMenu = false;
+    private bool collapseNavMenu = false;
 
     /// <summary>
-    /// 导航菜单Css
+    /// 导航菜单CSS
     /// </summary>
-    private string NavMenuCssClass => CollapseNavMenu ? "active" : null;
+    private string NavMenuCssClass => collapseNavMenu ? "active" : null;
+
+    /// <summary>
+    /// 当前主题
+    /// </summary>
+    private string currentTheme;
 
     /// <summary>
     /// 显示/隐藏 菜单
     /// </summary>
     private void ToggleNavMenu()
     {
-        CollapseNavMenu = !CollapseNavMenu;
+        collapseNavMenu = !collapseNavMenu;
     }
-
-    /// <summary>
-    /// 当前主题
-    /// </summary>
-    private string currentTheme;
 
     /// <summary>
     /// 初始化
@@ -73,10 +72,10 @@
     {
         currentTheme = currentTheme == "Light" ? "Dark" : "Light";
 
+        await Common.InvokeAsync("window.func.switchTheme");
         await Common.SetStorageAsync("theme", currentTheme);
 
-        await Common.InvokeAsync("window.func.switchTheme");
-
+        //如果是post界面，同时更改markdown编辑器主题
         var uri = await Common.CurrentUri();
         if (uri.AbsolutePath.StartsWith("/admin/post"))
         {

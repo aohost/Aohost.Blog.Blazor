@@ -1,4 +1,4 @@
-﻿@if (isLogin)
+﻿@if (!IsLogin)
 {
     <Loading></Loading>
 }
@@ -19,21 +19,37 @@ else
     /// <summary>
     /// 是否登录
     /// </summary>
-    private bool isLogin { get; set; }
+    private bool IsLogin { get; set; }
 
+    /// <summary>
+    /// 初始化
+    /// </summary>
+    /// <returns></returns>
     protected override async Task OnInitializedAsync()
     {
         var token = await Common.GetStorageAsync("token");
+        Http.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
 
         if (string.IsNullOrEmpty(token))
         {
-            isLogin = false;
+            IsLogin = false;
             await Common.NavigateTo("/");
         }
         else
         {
-            // TODO, 判断token是否合法
-            isLogin = true;
+            IsLogin = true;
+            /* 验证token是否正确
+            var result = await Http.GetFromJsonAsync<ServiceResult>($"/auth?token={token}");
+            if (result.Success)
+            {
+                IsLogin = true;
+            }
+            else
+            {
+                IsLogin = false;
+                await Common.NavigateTo("/");
+            }
+            */
         }
     }
 }

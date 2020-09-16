@@ -1,4 +1,4 @@
-﻿@import url('../aplayer/APlayer.min.css');
+﻿/*@import url('../aplayer/APlayer.min.css');*/
 
 *, *:after, *:before {
     -webkit-box-sizing: border-box;
@@ -2426,28 +2426,32 @@ button:focus {
     vertical-align: middle;
 }
 
-    .tts-setting-value label {
-        padding-right: 5px;
+.tts-setting-value label {
+    padding-right: 5px;
+}
+
+.tts-setting-value input[type=radio] {
+    margin-right: 3px;
+    display: initial;
+    visibility: initial;
+    width: initial;
+    height: initial;
+}
+
+.tts-setting-value input[type=range] {
+    height: 10px;
+    width: 250px;
+}
+
+    .tts-setting-value input[type=range]:focus {
+        outline: none;
     }
 
-    .tts-setting-value input[type=radio] {
-        margin-right: 3px;
-        display: initial;
-        visibility: initial;
-        width: initial;
-        height: initial;
-    }
+.tts-setting-value i {
+    font-size: 12px;
+    color: #5A9600;
+}
 
-    .tts-setting-value input[type=range] {
-        height: 10px;
-        width: 250px;
-    }
-
-        .tts-setting-value input[type=range]:focus {
-            outline: none;
-        }
-
-    .tts-setting-value i {
-        font-size: 12px;
-        color: #5A9600;
-    }
+.menu-item { }
+.navbar-right { }
+.toggleBtn { }

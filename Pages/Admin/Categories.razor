@@ -9,7 +9,7 @@
     {
         <div class="post-warp categories">
             <h2 class="post-title">-&nbsp;Categories&nbsp;-</h2>
-            @if (categories.Success && categories.Result.Any())
+            @if (categories.Success)// && categories.Result.Any())
             {
                 <div class="categories-card">
                     @foreach (var item in categories.Result)

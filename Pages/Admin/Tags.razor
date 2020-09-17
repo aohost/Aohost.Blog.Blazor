@@ -9,7 +9,7 @@
     {
     <div class="post-wrap tags">
         <h2 class="post-title">-&nbsp;Tags&nbsp;-</h2>
-        @if (tags.Success && tags.Result.Any())
+        @if (tags.Success)// && tags.Result.Any())
             {
         <div class="categories-card">
             @foreach (var item in tags.Result)

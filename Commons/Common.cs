@@ -93,11 +93,33 @@ namespace Aohost.Blog.BlazorApp.Commons
             return await Task.FromResult(uri);
         }
 
+        /// <summary>
+        /// 切换编辑器主题
+        /// </summary>
+        /// <param name="currentTheme"></param>
+        /// <returns></returns>
         public async Task SwitchEditorTheme(string currentTheme)
         {
             var editorTheme = currentTheme == "Light" ? "default" : "dark";
             await SetStorageAsync("editorThemt", editorTheme);
             await InvokeAsync("window.func.switchEditorTheme");
+        }
+
+        /// <summary>
+        /// 设置标题
+        /// </summary>
+        /// <param name="title"></param>
+        /// <returns></returns>
+        public async Task SetTitleAsync(string title = null)
+        {
+            if (string.IsNullOrEmpty(title))
+            {
+                await InvokeAsync("window.func.setTitle", "Aohost");
+            }
+            else
+            {
+                await InvokeAsync("window.func.setTitle", $"{title} - Aohost");
+            }
         }
     }
 }

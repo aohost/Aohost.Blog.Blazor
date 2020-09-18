@@ -42,11 +42,10 @@ else
     /// <summary>
     /// Categories
     /// </summary>
-    private ServiceResult<IEnumerable<Aohost.Blog.BlazorApp.Response.Blog.Category.QueryCategoryDto>> categories;
+    private ServiceResult<IEnumerable<QueryCategoryDto>> categories;
 
     protected override async Task OnInitializedAsync()
     {
-        var uri = new Uri("https://aohost/top/blog/categories");
-        categories = await Http.GetFromJsonAsync<ServiceResult<IEnumerable<QueryCategoryDto>>>(uri);
+        categories = await Http.GetFromJsonAsync<ServiceResult<IEnumerable<QueryCategoryDto>>>("/blog/categories");
     }
 }

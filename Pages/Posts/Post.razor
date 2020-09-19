@@ -1,10 +1,10 @@
 ﻿@page "/post/{year:int}/{month:int}/{day:int}/{name}"
 
-<link href="editor.md/css/editormd.preview.css" rel="stylesheet"/>
+<link href="https://static.meowv.com/editor.md/css/editormd.preview.css" rel="stylesheet" />
 
 @if (post == null)
 {
-    <Loading></Loading>
+    <Loading />
 }
 else
 {
@@ -12,7 +12,7 @@ else
     {
         var _post = post.Result;
 
-        <article class="post-warp">
+        <article class="post-wrap">
             <header class="post-header">
                 <h1 class="post-title">@_post.Title</h1>
                 <div class="post-meta">
@@ -50,13 +50,13 @@ else
                         {
                             @foreach (var tag in _post.Tags)
                             {
-                                <a href="/tag/@tag.DisplayName"># @tag.TagName</a>
+                                <a href="/tag/@tag.DisplayName/"># @tag.TagName</a>
                             }
                         }
                     </span>
                 </div>
                 <div>
-                    <a @onclick="@(async () => await Common.BaskAsync())">back</a>
+                    <a @onclick="@(async () => await Common.NavigateTo("/posts"))">back</a>
                     <span>· </span>
                     <a href="/">home</a>
                 </div>
@@ -64,23 +64,30 @@ else
             <section class="post-nav">
                 @if (_post.Previous != null)
                 {
-                    <a class="prev" rel="prev" @onclick="@(async ()=> await Common.NavigateTo($"/post{_post.Previous.Url}", true))" href="/post@_post.Previous.Url">@_post.Previous.Title</a>
+                    <a class="prev"
+                       rel="prev"
+                       @onclick="@(async () => await FetchData(_post.Previous.Url))"
+                       href="/post@_post.Previous.Url">@_post.Previous.Title</a>
                 }
                 @if (_post.Next != null)
                 {
-                    <a class="next" rel="next" @onclick="@(async ()=> await Common.NavigateTo($"/post{_post.Next.Url}", true))" href="/post@_post.Next.Url">@_post.Next.Title</a>
+                    <a class="next"
+                       rel="next"
+                       @onclick="@(async () => await FetchData(_post.Next.Url))"
+                       href="/post@_post.Next.Url">
+                        @_post.Next.Title
+                    </a>
                 }
             </section>
         </article>
     }
     else
     {
-        <ErrorTip></ErrorTip>
+        <ErrorTip />
     }
 }
 
-
-@code{
+@code {
     [Parameter]
     public int year { get; set; }
 
@@ -96,7 +103,7 @@ else
     /// <summary>
     /// URL
     /// </summary>
-    private string url => $"/{year}/{month.ToString().PadLeft(2, '0')}/{day.ToString().PadLeft(2, '0')}/{name}/";
+    private string url => $"/{year}/{(month >= 10 ? month.ToString() : $"0{month}")}/{(day >= 10 ? day.ToString() : $"0{day}")}/{name}/";
 
     /// <summary>
     /// 文章详情数据
@@ -106,9 +113,21 @@ else
     /// <summary>
     /// 初始化
     /// </summary>
-    /// <returns></returns>
     protected override async Task OnInitializedAsync()
     {
+        await FetchData(url);
+    }
+
+    /// <summary>
+    /// 请求数据，渲染页面
+    /// </summary>
+    /// <param name="url"></param>
+    /// <returns></returns>
+    private async Task FetchData(string url, bool isPostNav = false)
+    {
         post = await Http.GetFromJsonAsync<ServiceResult<PostDetailDto>>($"/blog/post?url={url}");
+        await Common.InvokeAsync("window.func.renderMarkdown");
+
+        await Common.SetTitleAsync(post.Result.Title);
     }
 }

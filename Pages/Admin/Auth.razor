@@ -1,72 +1,74 @@
 ﻿@page "/auth"
-@page "/account/auth"
-@using Microsoft.AspNetCore.WebUtilities
 
-<Loading></Loading>
+<Loading />
 
-@code
-{
+@code {
     /// <summary>
     /// 初始化
     /// </summary>
     /// <returns></returns>
     protected override async Task OnInitializedAsync()
     {
-        // localStorage中的access_token值
+        // localStorage中access_token值
         var access_token = await Common.GetStorageAsync("access_token");
 
+        // access_token有值
         if (!string.IsNullOrEmpty(access_token))
         {
-            var token = await Http.GetFromJsonAsync<ServiceResult<string>>($"/auth/token?access_token={access_token}");
-            if (token.Success)
+            // 获取token
+            var _token = await Http.GetFromJsonAsync<ServiceResult<string>>($"/auth/token?access_token={access_token}");
+            if (_token.Success)
             {
-                await Common.SetStorageAsync("token", token.Result);
+                // 将token存入localStorage
+                await Common.SetStorageAsync("token", _token.Result);
 
+                // 跳转至后台首页
                 await Common.NavigateTo("/admin");
             }
             else
             {
-
                 // access_token失效，或者请求失败的情况下，重新执行一次验证流程
                 await AuthProcessAsync();
             }
         }
-        else
+        else //access_token为空
         {
             await AuthProcessAsync();
         }
     }
 
     /// <summary>
-    /// 认证流程
+    /// 验证流程
     /// </summary>
     /// <returns></returns>
     private async Task AuthProcessAsync()
     {
-        // 当前uri对象
-        Uri uri = await Common.CurrentUri();
+        // 当前URI对象
+        var uri = await Common.CurrentUri();
 
         // 是否回调携带了code参数
-        bool hasCode = QueryHelpers.ParseQuery(uri.Query).TryGetValue("code", out var code);
+        bool hasCode = QueryHelpers.ParseQuery(uri.Query).TryGetValue("code", out Microsoft.Extensions.Primitives.StringValues code);
 
         if (hasCode)
         {
             var access_token = await Http.GetFromJsonAsync<ServiceResult<string>>($"/auth/access_token?code={code}");
             if (access_token.Success)
             {
+                // 将access_token存入localStorage
                 await Common.SetStorageAsync("access_token", access_token.Result);
 
                 var token = await Http.GetFromJsonAsync<ServiceResult<string>>($"/auth/token?access_token={access_token.Result}");
                 if (token.Success)
                 {
-                    // 将token存入localstorage
+                    // 将token存入localStorage
                     await Common.SetStorageAsync("token", token.Result);
+
                     // 成功认证授权，跳转至后台管理首页
                     await Common.NavigateTo("/admin");
                 }
                 else
                 {
-                    // 没有权限的人，回到首页去
+                    // 没有权限的人，回到首页去吧
                     await Common.NavigateTo("/");
 
                     // 输出提示信息
@@ -75,7 +77,7 @@
             }
             else
             {
-                // 出错了，回到首页
+                // 出错了，回到首页去吧
                 await Common.NavigateTo("/");
 
                 // 输出提示信息

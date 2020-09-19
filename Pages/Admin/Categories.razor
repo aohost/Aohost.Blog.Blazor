@@ -1,55 +1,57 @@
 ﻿@page "/admin/categories"
+@using Aohost.Blog.BlazorApp.Models.Base
+@using Aohost.Blog.BlazorApp.Models.Blog
 
 <AdminLayout>
     @if (categories == null)
     {
-        <Loading></Loading>
+        <Loading />
     }
     else
     {
-        <div class="post-warp categories">
+        <div class="post-wrap categories">
             <h2 class="post-title">-&nbsp;Categories&nbsp;-</h2>
-            @if (categories.Success)// && categories.Result.Any())
+            @if (categories.Success && categories.Result.Any())
             {
                 <div class="categories-card">
                     @foreach (var item in categories.Result)
                     {
                         <div class="card-item">
                             <div class="categories">
-                                <NavLink title="❌删除" @onclick="@(async ()=> await DeleteAsync(item.Id))">❌</NavLink>
-                                <NavLink title="📝编辑" @onclick="@(()=>ShowBox(item))">📝</NavLink>
-                                <NavLink target="_blank" href="@($"/category/{item.DisplayName}")"></NavLink>
-                                <h3>@item.CategoryName</h3>
-                                <small>(@item.Count)</small>
+                                <NavLink title="❌删除" @onclick="@(async () => await DeleteAsync(item.Id))">❌</NavLink>
+                                <NavLink title="📝编辑" @onclick="@(() => ShowBox(item))">📝</NavLink>
+                                <NavLink target="_blank" href="@($"/category/{item.DisplayName}")">
+                                    <h3>@item.CategoryName</h3>
+                                    <small>(@item.Count)</small>
+                                </NavLink>
                             </div>
                         </div>
                     }
                     <div class="card-item">
                         <div class="categories">
-                            <NavLink><h3 @onclick="@(()=>ShowBox())">📕~~~ 新增分类 ~~~📕</h3></NavLink>
+                            <NavLink><h3 @onclick="@(() => ShowBox())">📕~~~ 新增分类 ~~~📕</h3></NavLink>
                         </div>
                     </div>
                 </div>
             }
             else
             {
-                <ErrorTip></ErrorTip>
+                <ErrorTip />
             }
         </div>
 
         <Box OnClickCallback="@SubmitAsync" Open="@Open">
             <div class="box-item">
-                <b>DisplayName: </b><input type="text" @bind="@displayName" @bind:event="oninput"/>
+                <b>DisplayName：</b><input type="text" @bind="@displayName" @bind:event="oninput" />
             </div>
             <div class="box-item">
-                <b>CategoryName: </b><input type="text" @bind="@categoryName" @bind:event="oninput"/>
+                <b>CategoryName：</b><input type="text" @bind="@categoryName" @bind:event="oninput" />
             </div>
         </Box>
     }
 </AdminLayout>
 
 @code {
-
     /// <summary>
     /// 默认隐藏Box
     /// </summary>
@@ -61,12 +63,12 @@
     private string categoryName, displayName;
 
     /// <summary>
-    /// 更新分类的ID值
+    /// 更新分类的Id值
     /// </summary>
     private int id;
 
     /// <summary>
-    /// 分类列表
+    /// API返回的分类列表数据
     /// </summary>
     private ServiceResult<IEnumerable<QueryCategoryForAdminDto>> categories;
 
@@ -98,6 +100,9 @@
     /// <returns></returns>
     private async Task DeleteAsync(int id)
     {
+        Open = false;
+
+        // 弹窗确认
         bool confirmed = await Common.InvokeAsync<bool>("confirm", "\n💥💢真的要干掉这个该死的分类吗💢💥");
 
         if (confirmed)
@@ -122,12 +127,13 @@
         Open = true;
         id = 0;
 
+        // 新增
         if (dto == null)
         {
             displayName = null;
             categoryName = null;
         }
-        else
+        else // 更新
         {
             id = dto.Id;
             displayName = dto.DisplayName;
@@ -136,7 +142,7 @@
     }
 
     /// <summary>
-    /// 按钮确认点击事件
+    /// 确认按钮点击事件
     /// </summary>
     /// <returns></returns>
     private async Task SubmitAsync()
@@ -152,16 +158,12 @@
             return;
         }
 
-        HttpResponseMessage responseMessage;
+        var responseMessage = new HttpResponseMessage();
 
         if (id > 0)
-        {
             responseMessage = await Http.PutAsJsonAsync($"/blog/category?id={id}", input);
-        }
         else
-        {
             responseMessage = await Http.PostAsJsonAsync("/blog/category", input);
-        }
 
         var result = await responseMessage.Content.ReadFromJsonAsync<ServiceResult>();
         if (result.Success)

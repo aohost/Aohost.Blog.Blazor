@@ -52,11 +52,11 @@ namespace Aohost.Blog.BlazorApp.Commons
         {
             if (string.IsNullOrEmpty(title))
             {
-                await InvokeAsync("window.func.setTitle", $"🤣阿星Plus⭐⭐⭐");
+                await InvokeAsync("window.func.setTitle", $"🤣Aohost⭐⭐⭐");
             }
             else
             {
-                await InvokeAsync("window.func.setTitle", $"🤣{title} - 阿星Plus⭐⭐⭐");
+                await InvokeAsync("window.func.setTitle", $"🤣{title} - Aohost⭐⭐⭐");
             }
         }
 

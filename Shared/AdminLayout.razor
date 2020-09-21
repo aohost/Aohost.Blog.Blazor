@@ -1,15 +1,13 @@
-﻿@if (!IsLogin)
+﻿@if (!isLogin)
 {
-    <Loading></Loading>
+    <Loading />
 }
 else
 {
     @ChildContent
 }
 
-
-@code
-{
+@code {
     /// <summary>
     /// 展示内容
     /// </summary>
@@ -19,7 +17,7 @@ else
     /// <summary>
     /// 是否登录
     /// </summary>
-    private bool IsLogin { get; set; }
+    private bool isLogin { get; set; }
 
     /// <summary>
     /// 初始化
@@ -32,24 +30,21 @@ else
 
         if (string.IsNullOrEmpty(token))
         {
-            IsLogin = false;
+            isLogin = false;
             await Common.NavigateTo("/");
         }
         else
         {
-            IsLogin = true;
-            /* 验证token是否正确
             var result = await Http.GetFromJsonAsync<ServiceResult>($"/auth?token={token}");
             if (result.Success)
             {
-                IsLogin = true;
+                isLogin = true;
             }
             else
             {
-                IsLogin = false;
+                isLogin = false;
                 await Common.NavigateTo("/");
             }
-            */
         }
     }
 }

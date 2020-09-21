@@ -2,14 +2,20 @@
     <nav class="navbar">
         <div class="container">
             <div class="navbar-header header-logo">
-                <NavLink class="menu-item" href="/">Aohost</NavLink>
+                <NavLink class="menu-item" href="/">
+                    🤣阿星Plus
+                </NavLink>
             </div>
             <div class="menu navbar-right">
                 <NavLink class="menu-item" href="posts">Posts</NavLink>
                 <NavLink class="menu-item" href="categories">Categories</NavLink>
                 <NavLink class="menu-item" href="tags">Tags</NavLink>
                 <NavLink class="menu-item apps" href="apps">Apps</NavLink>
-                <input id="switch_default" type="checkbox" class="switch_default" @onchange="SwitchTheme" checked="@(currentTheme == "Dark")"/>
+                <input id="switch_default"
+                       type="checkbox"
+                       class="switch_default"
+                       @onchange="SwitchTheme"
+                       checked="@(currentTheme == "Dark")" />
                 <label for="switch_default" class="toggleBtn"></label>
             </div>
         </div>
@@ -18,7 +24,7 @@
         <div class="container">
             <div class="navbar-header">
                 <div>
-                    <NavLink class="menu-item" href="/">Aohost</NavLink>
+                    <NavLink class="menu-item" href="/">🤣阿星Plus</NavLink>
                     <NavLink @onclick="SwitchTheme">&nbsp;·&nbsp;@currentTheme</NavLink>
                 </div>
                 <div class="menu-toggle" @onclick="ToggleNavMenu">&#9776; Menu</div>
@@ -33,7 +39,7 @@
     </nav>
 </header>
 
-@code{
+@code {
     /// <summary>
     /// 下拉菜单是否打开
     /// </summary>
@@ -68,19 +74,21 @@
         await Common.InvokeAsync("window.func.switchTheme");
     }
 
+    /// <summary>
+    /// 切换主题
+    /// </summary>
     private async Task SwitchTheme()
     {
         currentTheme = currentTheme == "Light" ? "Dark" : "Light";
 
-        await Common.InvokeAsync("window.func.switchTheme");
         await Common.SetStorageAsync("theme", currentTheme);
 
-        //如果是post界面，同时更改markdown编辑器主题
+        await Common.InvokeAsync("window.func.switchTheme");
+
         var uri = await Common.CurrentUri();
         if (uri.AbsolutePath.StartsWith("/admin/post"))
         {
             await Common.SwitchEditorTheme(currentTheme);
         }
     }
-
 }

@@ -18,7 +18,7 @@ namespace Aohost.Blog.BlazorApp
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("app");
 
-            var baseAddress = "https://aohost.top";
+            var baseAddress = "https://aohost.top/";
 
             builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(baseAddress) });
 
